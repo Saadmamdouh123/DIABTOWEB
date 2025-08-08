@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ajouter un Patient</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Ajouter un nouveau patient</h2>
+    <form method="post" action="/submet">
+      <input type="text" name="name" placeholder="Nom" required>
+      <input type="number" name="age" placeholder="Âge" required>
+      <select name="sex" required>
+        <option value="">Sexe</option>
+        <option value="Homme">Homme</option>
+        <option value="Femme">Femme</option>
+      </select>
+      <input type="number" step="any" name="glucose" placeholder="Taux de glucose" required>
+      <input type="number" step="any" name="bmi" placeholder="IMC (BMI)" required>
+      <input type="number" step="any" name="bloodpressure" placeholder="Pression artérielle" required>
+      <input type="number" step="any" name="pedigree" placeholder="Pedigree" required>
+      <button type="submit">Soumettre</button>
+    </form>
+    <a href="/patients">↩ Retour</a>
+  </div>
+</body>
+</html>

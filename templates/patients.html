@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Liste des Patients</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Liste des Patients</h2>
+    <p>🧪 Pourcentage de patients diabétiques : {{ percent }}%</p>
+    <a href="/add" class="button">Ajouter un patient</a>
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Âge</th>
+          <th>Sexe</th>
+          <th>Glucose</th>
+          <th>BMI</th>
+          <th>Pression</th>
+          <th>Résultat</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in patients %}
+        <tr>
+          <td>{{ p[2] }}</td>
+          <td>{{ p[3] }}</td>
+          <td>{{ p[4] }}</td>
+          <td>{{ p[5] }}</td>
+          <td>{{ p[6] }}</td>
+          <td>{{ p[7] }}</td>
+          <td>
+            {% if p[9] == 1 %}
+              <span class="diabetic">Diabétique</span>
+            {% else %}
+              <span class="healthy">Non</span>
+            {% endif %}
+          </td>
+          <td><a href="/delete/{{ p[0] }}" class="delete">🗑 Supprimer</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
