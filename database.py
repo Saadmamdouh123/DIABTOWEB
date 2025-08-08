@@ -1,5 +1,11 @@
 import psycopg2
 
+# database.py – Connexion et Initialisation de la Base de Données PostgreSQL
+# Ce module configure la connexion à la base de données PostgreSQL et initialise 
+# les tables nécessaires au bon fonctionnement de l’application DiabetoWeb.
+
+
+# Connexion PostgreSQL
 conn = psycopg2.connect(
     dbname="DiabData",
     user="postgres",
@@ -9,6 +15,9 @@ conn = psycopg2.connect(
 )
 
 cursor = conn.cursor()
+
+# Fonction create_tables()
+# Cette fonction crée les tables suivantes si elles n'existent pas :
 
 def create_tables():
     cursor.execute("""
@@ -20,7 +29,9 @@ def create_tables():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
-    
+
+# patients
+# Stocke les informations cliniques de chaque patient.
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS patients (
         id SERIAL PRIMARY KEY,
@@ -37,6 +48,8 @@ def create_tables():
     );
     """)
 
+# predictions
+# Historique des prédictions faites par le modèle ML
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS predictions (
         id SERIAL PRIMARY KEY,
@@ -45,5 +58,5 @@ def create_tables():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
-
+# Exécution de la création des tables
     conn.commit()

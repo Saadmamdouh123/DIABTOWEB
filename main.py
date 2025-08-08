@@ -7,14 +7,26 @@ from schemas import DoctorCreate, PatientCreate
 from utils import hash_password, verify_password, predict_diabetes
 from datetime import datetime
 
+
+# Initialisation de l’application
 app = FastAPI(debug=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 create_tables()
 
+
+# Routes d’authentification
+# GET /
+# Affiche la page de connexion (login.html).
+
 @app.get("/", response_class=HTMLResponse)
 def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+
+
+# GET /register
+# Affiche la page d’inscription (register.html).
+# POST /register
 
 @app.get("/register", response_class=HTMLResponse)
 def register_page(request: Request):
@@ -29,6 +41,9 @@ def register(username: str = Form(...), email: str = Form(...), password: str = 
     conn.commit()
     return RedirectResponse("/", status_code=302)
 
+# POST /login
+# Vérifie les identifiants de connexion. Si corrects, redirige vers /home et crée un cookie doctor_id.
+
 @app.post("/login")
 def login(request: Request, username: str = Form(...), password: str = Form(...)):
     cursor.execute("SELECT id, password FROM doctors WHERE username = %s", (username,))
@@ -39,13 +54,27 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
         return response
     return templates.TemplateResponse("login.html", {"request": request, "error": "Identifiants incorrects"})
 
+# Route d’accueil
+# GET /home
+# Affiche la page home.html après authentification réussie
+
 @app.get("/home", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
+# Ajout de patients
+# GET /add
+# Affiche un formulaire HTML pour l’ajout d’un patient (add_patient.html).
+
 @app.get("/add", response_class=HTMLResponse)
 def add_patient_form(request: Request):
     return templates.TemplateResponse("add_patient.html", {"request": request})
+
+# POST /submet
+# Récupère les données du formulaire patient.
+# Prédit le risque de diabète via predict_diabetes().
+# Insère les données dans les tables patients et predictions.
+# Redirige vers /patients.
 
 @app.post("/submet")
 def submit_patient(request: Request,
@@ -68,6 +97,11 @@ def submit_patient(request: Request,
     conn.commit()
     return RedirectResponse("/patients", status_code=302)
 
+# Affichage des patients
+# GET /patients
+# Affiche un tableau avec les patients du médecin connecté.
+# Affiche aussi le pourcentage de patients diabétiques.
+
 @app.get("/patients", response_class=HTMLResponse)
 def view_patients(request: Request):
     doctor_id = int(request.cookies.get("doctor_id"))
@@ -77,6 +111,10 @@ def view_patients(request: Request):
     diabetic = sum(1 for p in patients if p[9] == 1)
     percent = (diabetic / total * 100) if total > 0 else 0
     return templates.TemplateResponse("patients.html", {"request": request, "patients": patients, "percent": percent})
+
+# Suppression de patients
+# GET /delete/{id}
+# Supprime le patient avec l’identifiant donné.
 
 @app.get("/delete/{id}")
 def delete_patient(id: int):
